@@ -54,7 +54,7 @@ export class UsersData {
     }
 
     public findByEmail(email: string):UserDTO |undefined{
-        const user = this.users.find((p)=> p.name.includes(String(email)));
+        const user = this.users.find((p)=> p.email.includes(String(email)));
         return user;
     }
 
