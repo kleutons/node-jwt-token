@@ -1,10 +1,19 @@
 import {v4 as uuid} from "uuid";
+import bcrypt from "bcrypt";
+import generatePassword from "../utils/generatePassword";
+
+
+export enum UserRole{
+    ADMIM,
+    USER
+}
 
 export interface UserDTO {
     id: string
     name: string,
     email: string,
     password: string
+    role: UserRole
 }
 
 export interface UserCreateDTO {
@@ -24,42 +33,62 @@ export class UsersData {
 
     constructor(){
         this.users = [];
+        this.initializeUsers();
     }
-    
+    private async initializeUsers() {
+        const hashPassword = await generatePassword("123456");
+        if(!hashPassword){
+            throw new Error("error generating password");
+        }
+        this.users.push({ 
+            id: "1000", 
+            name: "Admim", 
+            email: "adim@email.com", 
+            password: hashPassword!, 
+            role: UserRole.ADMIM 
+        });
+    }
+
     public list():UserDTO[]{
         return this.users;
     }
 
-    public findByName(name: string):UserDTO |undefined{
-        const product = this.users.find((p)=> p.name.includes(String(name)));
-        return product;
+    public findByEmail(email: string):UserDTO |undefined{
+        const user = this.users.find((p)=> p.name.includes(String(email)));
+        return user;
     }
 
     public findById(id: string):UserFind | null{
-        const productIndex = this.users.findIndex((p)=> p.id === id);
+        const userIndex = this.users.findIndex((p)=> p.id === id);
 
-        if(productIndex === -1){
+        if(userIndex === -1){
             return null;
         }
 
         return { 
-            index: productIndex,
-            user: this.users[productIndex]
+            index: userIndex,
+            user: this.users[userIndex]
         };
     }
     
-    public create(data: UserCreateDTO):UserDTO{
-        const isExistes = this.findByName(data.name);
+    public async create(data: UserCreateDTO):Promise<UserDTO>{
+        const isExistes = this.findByEmail(data.email);
+
+        const hashPassword = await generatePassword(data.password);
+        if(!hashPassword){
+            throw new Error("error generating password");
+        }
 
         if(isExistes){
-            throw new Error("Product already exists!");
+            throw new Error("User already exists!");
         }
 
         const newData: UserDTO = {
             id: uuid(),
             name: data.name,
             email: data.email,
-            password: data.password
+            password: hashPassword,
+            role: UserRole.USER
         }
 
         this.users.push(newData);
@@ -67,11 +96,20 @@ export class UsersData {
         return newData
     }
 
-    public update(id:string, data: Partial<UserCreateDTO> ){
+    public async update(id:string, data: Partial<UserCreateDTO> ){
         const isExistes = this.findById(id);
 
         if(!isExistes){
-            throw new Error("Product already exists!");
+            throw new Error("User already exists!");
+        }
+
+        if(data.password){
+            const hashPassword = await generatePassword("123456");
+            if(!hashPassword){
+                throw new Error("error generating password");
+            }else{
+                data.password = hashPassword;
+            }
         }
 
         const updateProduct: UserDTO = {
@@ -88,7 +126,7 @@ export class UsersData {
         const isExistes = this.findById(id);
 
         if(!isExistes){
-            throw new Error("Product not found!");
+            throw new Error("User not found!");
         }
 
         this.users.splice(isExistes.index, 1);
