@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import UserConroller from "../controllers/userController";
 import AuthController from "../controllers/authControllers";
+import { isAdmin } from "../middleware/isAdmim";
 
 const router = Router();
 
@@ -18,7 +19,7 @@ const userConroller     = new UserConroller();
 const authControllers   = new AuthController();
 
 
-router.get(ROUTERS.USER, (req, res)=>{
+router.get(ROUTERS.USER, authControllers.verifyToken, isAdmin, (req, res)=>{
    userConroller.listAll(req, res);
 })
 
@@ -30,7 +31,7 @@ router.post(ROUTERS.USER, authControllers.verifyToken, (req, res)=>{
     userConroller.update(req, res);
  })
 
- router.delete(ROUTERS.USER+"/:id", authControllers.verifyToken, (req, res)=>{
+ router.delete(ROUTERS.USER+"/:id", authControllers.verifyToken, isAdmin, (req, res)=>{
     userConroller.delete(req, res);
  })
 
