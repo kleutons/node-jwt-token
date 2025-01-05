@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import UserConroller from "../controllers/userController";
-import authControllers from "../controllers/authControllers";
+import AuthController from "../controllers/authControllers";
 
 const router = Router();
 
@@ -14,20 +14,23 @@ enum ROUTERS {
 }
 
 
-const userConroller = new UserConroller();
+const userConroller     = new UserConroller();
+const authControllers   = new AuthController();
+
+
 router.get(ROUTERS.USER, (req, res)=>{
    userConroller.listAll(req, res);
 })
 
-router.post(ROUTERS.USER, (req, res)=>{
+router.post(ROUTERS.USER, authControllers.verifyToken, (req, res)=>{
     userConroller.create(req, res);
  })
 
- router.put(ROUTERS.USER+"/:id", (req, res)=>{
+ router.put(ROUTERS.USER+"/:id", authControllers.verifyToken, (req, res)=>{
     userConroller.update(req, res);
  })
 
- router.delete(ROUTERS.USER+"/:id", (req, res)=>{
+ router.delete(ROUTERS.USER+"/:id", authControllers.verifyToken, (req, res)=>{
     userConroller.delete(req, res);
  })
 
