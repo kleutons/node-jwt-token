@@ -4,7 +4,7 @@ import generatePassword from "../utils/generatePassword";
 
 
 export enum UserRole{
-    ADMIM,
+    ADMIN,
     USER
 }
 
@@ -42,10 +42,10 @@ export class UsersData {
         }
         this.users.push({ 
             id: "1000", 
-            name: "Admim", 
-            email: "adim@email.com", 
+            name: "Admin", 
+            email: "adm@email.com", 
             password: hashPassword!, 
-            role: UserRole.ADMIM 
+            role: UserRole.ADMIN 
         });
     }
 
