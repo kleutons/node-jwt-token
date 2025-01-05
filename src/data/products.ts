@@ -20,23 +20,20 @@ interface ProductFind{
 
 export class ProductData {
 
-    private products: ProductDTO[];
+    private static products: ProductDTO[] = [];
 
-    constructor(){
-        this.products = [];
-    }
     
     public list():ProductDTO[]{
-        return this.products;
+        return ProductData.products;
     }
 
     public findByName(name: string):ProductDTO |undefined{
-        const product = this.products.find((p)=> p.name.includes(String(name)));
+        const product = ProductData.products.find((p)=> p.name.includes(String(name)));
         return product;
     }
 
     public findById(id: string):ProductFind | null{
-        const productIndex = this.products.findIndex((p)=> p.id === id);
+        const productIndex = ProductData.products.findIndex((p)=> p.id === id);
 
         if(productIndex === -1){
             return null;
@@ -44,7 +41,7 @@ export class ProductData {
 
         return { 
             index: productIndex,
-            product: this.products[productIndex]
+            product: ProductData.products[productIndex]
         };
     }
     
@@ -62,7 +59,7 @@ export class ProductData {
             price: data.price
         }
 
-        this.products.push(newData);
+        ProductData.products.push(newData);
 
         return newData
     }
@@ -79,7 +76,7 @@ export class ProductData {
             ...data 
         };
 
-        this.products[isExistes.index] = updateProduct;
+        ProductData.products[isExistes.index] = updateProduct;
 
         return updateProduct;
     }
@@ -91,7 +88,7 @@ export class ProductData {
             throw new Error("Product not found!");
         }
 
-        this.products.splice(isExistes.index, 1);
+        ProductData.products.splice(isExistes.index, 1);
 
         return;
     }

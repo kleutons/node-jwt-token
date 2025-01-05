@@ -29,10 +29,9 @@ interface UserFind{
 
 export class UsersData {
 
-    private users: UserDTO[];
+    private static users: UserDTO[] = [];
 
     constructor(){
-        this.users = [];
         this.initializeUsers();
     }
     private async initializeUsers() {
@@ -40,7 +39,7 @@ export class UsersData {
         if(!hashPassword){
             throw new Error("error generating password");
         }
-        this.users.push({ 
+        UsersData.users.push({ 
             id: "1000", 
             name: "Admin", 
             email: "adm@email.com", 
@@ -50,16 +49,18 @@ export class UsersData {
     }
 
     public list():UserDTO[]{
-        return this.users;
+        return UsersData.users;
     }
 
     public findByEmail(email: string):UserDTO |undefined{
-        const user = this.users.find((p)=> p.email.includes(String(email)));
+        const user = UsersData.users.find((p)=> p.email.includes(String(email)));
+        console.log(UsersData.users);
+        console.log(user);
         return user;
     }
 
     public findById(id: string):UserFind | null{
-        const userIndex = this.users.findIndex((p)=> p.id === id);
+        const userIndex = UsersData.users.findIndex((p)=> p.id === id);
 
         if(userIndex === -1){
             return null;
@@ -67,7 +68,7 @@ export class UsersData {
 
         return { 
             index: userIndex,
-            user: this.users[userIndex]
+            user: UsersData.users[userIndex]
         };
     }
     
@@ -91,7 +92,7 @@ export class UsersData {
             role: UserRole.USER
         }
 
-        this.users.push(newData);
+        UsersData.users.push(newData);
 
         return newData
     }
@@ -117,7 +118,7 @@ export class UsersData {
             ...data
         };
 
-        this.users[isExistes.index] = updateProduct;
+        UsersData.users[isExistes.index] = updateProduct;
 
         return updateProduct;
     }
@@ -129,7 +130,7 @@ export class UsersData {
             throw new Error("User not found!");
         }
 
-        this.users.splice(isExistes.index, 1);
+        UsersData.users.splice(isExistes.index, 1);
 
         return;
     }
